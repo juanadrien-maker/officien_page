@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Votre Vidéo Personnalisée</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+        }
+        .video-container {
+            position: relative;
+            width: 100%;
+            max-width: 1200px;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        video { width: 100%; height: auto; display: block; }
+        .cta-overlay {
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            text-align: center;
+        }
+        .cta-button {
+            display: inline-block;
+            background: #FF6B6B;
+            color: white;
+            padding: 18px 50px;
+            text-decoration: none;
+            border-radius: 50px;
+            font-size: 20px;
+            font-weight: bold;
+            box-shadow: 0 8px 25px rgba(255,107,107,0.5);
+            transition: all 0.3s ease;
+            animation: pulse 2s infinite;
+        }
+        .cta-button:hover {
+            background: #FF5252;
+            transform: scale(1.08);
+            box-shadow: 0 12px 35px rgba(255,107,107,0.7);
+        }
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 8px 25px rgba(255,107,107,0.5); }
+            50% { box-shadow: 0 8px 35px rgba(255,107,107,0.8); }
+        }
+        @media (max-width: 768px) {
+            .cta-overlay { bottom: 60px; }
+            .cta-button { padding: 15px 35px; font-size: 16px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="video-container">
+        <video controls autoplay muted loop playsinline>
+            <source src="https://shotstack-api-stage-output.s3-ap-southeast-2.amazonaws.com/u6uydd4ijv/1ccf8e5f-f714-45be-976f-3c5d0b2a2089.mp4" type="video/mp4">
+            Votre navigateur ne supporte pas la lecture de vidéos.
+        </video>
+        <div class="cta-overlay">
+    <p id="countdown" style="color: white; font-size: 16px; margin: 10px 0;">
+        Un nouveau bouton apparaîtra dans <span id="timer">10</span> secondes...
+    </p>
+    <a href="https://officein.fr" target="_blank" class="cta-button secondary hidden-button" id="siteButton">
+      <img src="https://i.ibb.co/7JxTWSvB/S-inscrire-au-5.png" width="400" style="display:block;border-radius:8px;margin-top:-200px;">
+    </a>
+</div>
+
+<script>
+    let timeLeft = 10;
+    const timerElement = document.getElementById('timer');
+    const countdownElement = document.getElementById('countdown');
+    const button = document.getElementById('siteButton');
+    
+    // Compte à rebours
+    const countdown = setInterval(function() {
+        timeLeft--;
+        timerElement.textContent = timeLeft;
+        
+        if (timeLeft <= 0) {
+            clearInterval(countdown);
+            // Cacher le message
+            countdownElement.style.display = 'none';
+            // Afficher le bouton
+            button.style.display = 'inline-block';
+            setTimeout(() => {
+                button.style.opacity = '1';
+            }, 10);
+        }
+    }, 1000);
+</script>
+    </div>
+</body>
+</html>
