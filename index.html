@@ -24,10 +24,13 @@
             overflow: hidden;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         }
-        video { 
-            width: 90%; 
-            height: auto; 
-            display: block; 
+        
+        /* Style pour l'iframe Vimeo */
+        iframe { 
+            width: 100%; 
+            height: 675px;
+            display: block;
+            border: none;
         }
         
         /* Conteneur du bouton positionné en bas à droite */
@@ -127,6 +130,9 @@
         }
         
         @media (max-width: 768px) {
+            iframe {
+                height: 400px;
+            }
             .cta-overlay { 
                 bottom: 20px; 
                 right: 10px; 
@@ -146,52 +152,60 @@
             <p>Chargement de votre vidéo...</p>
         </div>
         
-        <!-- Vidéo (cachée au départ) -->
-        <video controls autoplay muted loop playsinline id="mainVideo" style="display: none;">
-            <source id="videoSource" src="" type="video/mp4">
-            Votre navigateur ne supporte pas la lecture de vidéos.
-        </video>
+        <!-- Iframe Vimeo -->
+        <iframe id="vimeoPlayer" allow="autoplay; fullscreen; picture-in-picture" style="display: none;"></iframe>
         
         <div class="cta-overlay">
             <div class="button-wrapper hidden-button" id="buttonWrapper">
                 <a href="https://officein.fr" target="_blank" class="cta-button">
-                    🌐 Voire le Demo
+                    🌐 Voir le Demo
                 </a>
             </div>
         </div>
     </div>
 
+    <!-- SDK Vimeo Player -->
+    <script src="https://player.vimeo.com/api/player.js"></script>
+    
     <script>
-        // Récupérer l'URL de la vidéo depuis les paramètres URL
+        // Récupérer l'ID de la vidéo depuis les paramètres URL
         const urlParams = new URLSearchParams(window.location.search);
-        const videoUrl = urlParams.get('video');
+        const videoParam = urlParams.get('video');
         
-        const video = document.getElementById('mainVideo');
-        const videoSource = document.getElementById('videoSource');
+        const playerIframe = document.getElementById('vimeoPlayer');
         const loadingMessage = document.getElementById('loadingMessage');
         const buttonWrapper = document.getElementById('buttonWrapper');
         
-        if (videoUrl) {
-            // Définir la source de la vidéo
-            videoSource.src = videoUrl;
+        if (videoParam) {
+            // Extraire l'ID Vimeo (supporter à la fois l'ID seul et l'URL complète)
+            let videoId;
+            if (videoParam.includes('vimeo.com/')) {
+                videoId = videoParam.split('vimeo.com/')[1].split('?')[0];
+            } else {
+                videoId = videoParam;
+            }
             
-            // Charger la vidéo
-            video.load();
+            // Construire l'URL du player Vimeo
+            playerIframe.src = `https://player.vimeo.com/video/${videoId}?autoplay=1&muted=1&loop=1`;
             
-            // Quand la vidéo est prête, la montrer et cacher le message de chargement
-            video.addEventListener('loadeddata', function() {
+            // Initialiser le player Vimeo
+            const player = new Vimeo.Player(playerIframe);
+            
+            // Quand le player est prêt
+            player.ready().then(function() {
                 loadingMessage.style.display = 'none';
-                video.style.display = 'block';
+                playerIframe.style.display = 'block';
             });
             
             // Écouter le temps de lecture
-            video.addEventListener('timeupdate', function() {
+            player.on('timeupdate', function(data) {
                 // Afficher le bouton après 87 secondes
-                if (video.currentTime >= 87 && buttonWrapper.classList.contains('hidden-button')) {
+                if (data.seconds >= 87 && buttonWrapper.classList.contains('hidden-button')) {
                     buttonWrapper.classList.remove('hidden-button');
                     buttonWrapper.classList.add('slide-in');
                 }
             });
+            
         } else {
             // Si pas de paramètre vidéo
             loadingMessage.innerHTML = '<p>❌ Aucune vidéo spécifiée</p>';
@@ -199,4 +213,3 @@
     </script>
 </body>
 </html>
-
