@@ -33,8 +33,8 @@
         /* Conteneur du bouton positionné en bas à droite */
         .cta-overlay {
             position: absolute;
-            bottom: 150px;
-            right: 10px;
+            bottom: 210px;
+            right: 7px;
             z-index: 10;
         }
         
@@ -186,8 +186,8 @@
             
             // Écouter le temps de lecture
             video.addEventListener('timeupdate', function() {
-                // Afficher le bouton après 10 secondes
-                if (video.currentTime >= 10 && buttonWrapper.classList.contains('hidden-button')) {
+                // Afficher le bouton après 87 secondes
+                if (video.currentTime >= 87 && buttonWrapper.classList.contains('hidden-button')) {
                     buttonWrapper.classList.remove('hidden-button');
                     buttonWrapper.classList.add('slide-in');
                 }
