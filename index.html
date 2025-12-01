@@ -25,7 +25,6 @@
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         }
         
-        /* Style pour l'iframe Vimeo */
         iframe { 
             width: 100%; 
             height: 675px;
@@ -33,73 +32,191 @@
             border: none;
         }
         
-        /* Conteneur du bouton positionné en bas à droite */
+        /* Conteneur CTA - repositionné plus centré */
         .cta-overlay {
             position: absolute;
-            bottom: 210px;
-            right: 7px;
-            z-index: 10;
+  bottom: 5%;
+  right: 50%;
+  left: 50%;
+  
+  z-index: 10;
         }
         
-        /* Wrapper pour la bordure animée */
-        .button-wrapper {
+        /* Container pour le bouton et le curseur */
+        .cta-container {
             position: relative;
             display: inline-block;
-            padding: 4px;
-            border-radius: 50px;
-            background: linear-gradient(90deg, #a2a2ab, #090573, #ca18ac, #170de0);
-            background-size: 300% 300%;
-            animation: borderGradient 12s linear infinite;
         }
         
+        /* Curseur animé */
+        .cursor-pointer {
+            position: absolute;
+            top: -60px;
+            right: -60px;
+            width: 40px;
+            height: 40px;
+            pointer-events: none;
+            opacity: 0;
+            animation: cursorFloat 2s ease-in-out infinite, cursorFade 0.6s ease-in-out 0.5s forwards;
+        }
+        
+        .cursor-pointer svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+        }
+        
+        @keyframes cursorFloat {
+            0%, 100% { 
+                transform: translate(0, 0) rotate(-20deg); 
+            }
+            50% { 
+                transform: translate(-10px, -10px) rotate(-20deg); 
+            }
+        }
+        
+        @keyframes cursorFade {
+            to { opacity: 1; }
+        }
+        
+        /* Animation de clic du curseur */
+        @keyframes cursorClick {
+            0%, 100% { transform: translate(0, 0) rotate(-20deg) scale(1); }
+            50% { transform: translate(0, 0) rotate(-20deg) scale(0.9); }
+        }
+        
+        .cursor-pointer.clicking {
+            animation: cursorClick 0.3s ease-in-out infinite;
+        }
+        
+        /* Bouton moderne style YouTube */
         .cta-button {
-            display: inline-block;
-            background: linear-gradient(90deg, #010232, #090573, #0e04d0, #170de0);
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: #ff0000;
             color: white;
-            padding: 18px 40px;
+            padding: 16px 32px;
             text-decoration: none;
-            border-radius: 50px;
+            border-radius: 8px;
             font-size: 18px;
-            font-weight: bold;
-            box-shadow: 0 8px 25px rgba(118,75,162,0.5);
+            font-weight: 600;
+            box-shadow: 0 4px 20px rgba(255, 0, 0, 0.4);
             transition: all 0.3s ease;
             position: relative;
-            z-index: 1;
+            overflow: hidden;
+        }
+        
+        /* Effet de brillance sur le bouton */
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 30%,
+                rgba(255, 255, 255, 0.3) 50%,
+                transparent 70%
+            );
+            transform: rotate(45deg);
+            animation: shine 3s ease-in-out infinite;
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
         }
         
         .cta-button:hover {
-            background: #5a3680;
+            background: #cc0000;
             transform: scale(1.05);
-            box-shadow: 0 12px 35px rgba(118,75,162,0.7);
+            box-shadow: 0 6px 30px rgba(255, 0, 0, 0.6);
         }
         
-        /* Animation de la bordure qui tourne */
-        @keyframes borderGradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        .cta-button:active {
+            transform: scale(0.98);
         }
         
-        /* Bouton caché au départ */
+        /* Icône dans le bouton */
+        .button-icon {
+            font-size: 24px;
+            animation: bounce 2s ease-in-out infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        /* Effet de pulsation autour du bouton */
+        .pulse-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            border: 3px solid #ff0000;
+            border-radius: 8px;
+            animation: pulse 2s ease-out infinite;
+            opacity: 0;
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1.3);
+                opacity: 0;
+            }
+        }
+        
+        /* Badge "NOUVEAU" ou "GRATUIT" */
+        .badge {
+            position: absolute;
+            top: -12px;
+            right: -12px;
+            background: #00ff00;
+            color: #000;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(0, 255, 0, 0.5);
+            animation: badgePulse 1.5s ease-in-out infinite;
+            z-index: 1;
+        }
+        
+        @keyframes badgePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        /* État caché */
         .hidden-button {
             opacity: 0;
-            transform: translateX(-400px);
+            transform: translateY(50px) scale(0.8);
             transition: none;
         }
         
-        /* Animation de glissement */
+        /* Animation d'apparition */
         .slide-in {
-            animation: slideFromLeft 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+            animation: slideIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         }
         
-        @keyframes slideFromLeft {
+        @keyframes slideIn {
             0% {
                 opacity: 0;
-                transform: translateX(-400px);
+                transform: translateY(50px) scale(0.8);
             }
             100% {
                 opacity: 1;
-                transform: translateX(0);
+                transform: translateY(0) scale(1);
             }
         }
         
@@ -134,41 +251,49 @@
                 height: 400px;
             }
             .cta-overlay { 
-                bottom: 20px; 
-                right: 10px; 
+                bottom: 15%;
             }
             .cta-button { 
-                padding: 14px 30px; 
+                padding: 14px 24px; 
                 font-size: 16px; 
+            }
+            .cursor-pointer {
+                display: none;
             }
         }
     </style>
 </head>
 <body>
     <div class="video-container">
-        <!-- Message de chargement -->
         <div class="loading" id="loadingMessage">
             <div class="spinner"></div>
             <p>Chargement de votre vidéo...</p>
         </div>
         
-        <!-- Iframe Vimeo -->
-        <iframe id="vimeoPlayer" allow="autoplay; fullscreen; picture-in-picture" style="display: none;"></iframe>
+        <iframe id="vimeoPlayer" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="display: none;"></iframe>
         
         <div class="cta-overlay">
-            <div class="button-wrapper hidden-button" id="buttonWrapper">
-                <a href="https://officein.fr" target="_blank" class="cta-button">
-                    🌐 Voir le Demo
+            <div class="cta-container hidden-button" id="buttonWrapper">
+                
+                <!-- Anneaux de pulsation -->
+                <div class="pulse-ring"></div>
+                <div class="pulse-ring" style="animation-delay: 1s;"></div>
+                
+                <!-- Badge -->
+                <span class="badge">Voir la Démo</span>
+                
+                <!-- Bouton CTA -->
+                <a href="https://officein.fr" target="_blank" class="cta-button" id="ctaButton">
+                    <span class="button-icon">🎯</span>
+                    <span>officein.fr</span>
                 </a>
             </div>
         </div>
     </div>
 
-    <!-- SDK Vimeo Player -->
     <script src="https://player.vimeo.com/api/player.js"></script>
     
     <script>
-        // Récupérer l'ID de la vidéo depuis les paramètres URL
         const urlParams = new URLSearchParams(window.location.search);
         const videoParam = urlParams.get('video');
         
@@ -176,38 +301,54 @@
         const loadingMessage = document.getElementById('loadingMessage');
         const buttonWrapper = document.getElementById('buttonWrapper');
         
+        const ctaButton = document.getElementById('ctaButton');
+        
         if (videoParam) {
-            // Extraire l'ID Vimeo (supporter à la fois l'ID seul et l'URL complète)
             let videoId;
             if (videoParam.includes('vimeo.com/')) {
-                videoId = videoParam.split('vimeo.com/')[1].split('?')[0];
+                videoId = videoParam.split('vimeo.com/')[1].split('?')[0].split('/')[0];
             } else {
                 videoId = videoParam;
             }
             
-            // Construire l'URL du player Vimeo
-            playerIframe.src = `https://player.vimeo.com/video/${videoId}?autoplay=1&muted=1&loop=1`;
+            const embedUrl = `https://player.vimeo.com/video/${videoId}?autoplay=1&muted=1&loop=1&title=0&byline=0&portrait=0`;
+            playerIframe.src = embedUrl;
             
-            // Initialiser le player Vimeo
-            const player = new Vimeo.Player(playerIframe);
-            
-            // Quand le player est prêt
-            player.ready().then(function() {
-                loadingMessage.style.display = 'none';
-                playerIframe.style.display = 'block';
-            });
-            
-            // Écouter le temps de lecture
-            player.on('timeupdate', function(data) {
-                // Afficher le bouton après 87 secondes
-                if (data.seconds >= 87 && buttonWrapper.classList.contains('hidden-button')) {
-                    buttonWrapper.classList.remove('hidden-button');
-                    buttonWrapper.classList.add('slide-in');
+            playerIframe.onload = function() {
+                try {
+                    const player = new Vimeo.Player(playerIframe);
+                    
+                    player.ready().then(function() {
+                        loadingMessage.style.display = 'none';
+                        playerIframe.style.display = 'block';
+                        player.setVolume(1);
+                    }).catch(function(error) {
+                        console.error('Erreur ready:', error);
+                        loadingMessage.innerHTML = '<p>❌ Erreur de chargement de la vidéo</p>';
+                    });
+                    
+                    player.on('timeupdate', function(data) {
+                        if (data.seconds >= 87 && buttonWrapper.classList.contains('hidden-button')) {
+                            buttonWrapper.classList.remove('hidden-button');
+                            buttonWrapper.classList.add('slide-in');
+                            
+                           
+                        }
+                    });
+                    
+                    player.on('error', function(error) {
+                        console.error('Erreur player:', error);
+                        loadingMessage.innerHTML = '<p>❌ Impossible de lire la vidéo</p>';
+                        loadingMessage.style.display = 'block';
+                    });
+                    
+                } catch (error) {
+                    console.error('Erreur initialisation:', error);
+                    loadingMessage.innerHTML = '<p>❌ Erreur d\'initialisation</p>';
                 }
-            });
+            };
             
         } else {
-            // Si pas de paramètre vidéo
             loadingMessage.innerHTML = '<p>❌ Aucune vidéo spécifiée</p>';
         }
     </script>
