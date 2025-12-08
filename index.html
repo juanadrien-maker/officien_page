@@ -398,7 +398,9 @@ function sendToMake() {
             first_open: isFirstOpen,
             page_url: window.location.href,
             timestamp: nowFR(),
-            nom: nomUser
+            nom: nomUser,
+            userAgent: navigator.userAgent,
+        language: navigator.language  
         })
     })
     .then(res => console.log("Webhook Make OK:", res.status))
