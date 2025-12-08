@@ -352,5 +352,57 @@
             loadingMessage.innerHTML = '<p>❌ Aucune vidéo spécifiée</p>';
         }
     </script>
+    <script>
+// ---------------------------
+// 1. Récupération User ID
+// ---------------------------
+const params = new URLSearchParams(window.location.search);
+ 
+const userId= urlParams.get('video');
+const nomUser= urlParams.get('nom');       
+
+if (!userId) {
+    console.warn("Aucun user ID dans l'URL → tracking impossible");
+}
+
+// ---------------------------
+// 2. Système de détection 1ère visite
+// LocalStorage → évite double comptage
+// ---------------------------
+
+const localKey = "video_opened_" + userId;
+let isFirstOpen = false;
+
+if (!localStorage.getItem(localKey)) {
+    isFirstOpen = true;
+    localStorage.setItem(localKey, "true");
+}
+
+// ---------------------------
+// 3. Envoi webhook vers Make
+// ---------------------------
+
+function sendToMake() {
+    fetch("https://hook.eu2.make.com/po87vh7wqceje7sc6ctc6lvyg8onuio8", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            user_id: userId,
+            first_open: isFirstOpen,
+            page_url: window.location.href,
+            timestamp: new Date().toISOString(),
+            nom: nomUser
+        })
+    })
+    .then(res => console.log("Webhook Make OK:", res.status))
+    .catch(err => console.error("Erreur Webhook:", err));
+}
+
+// Appeler seulement si userId est correct
+if (userId) {
+    sendToMake();
+}
+</script>
+
 </body>
 </html>
