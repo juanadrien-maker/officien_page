@@ -354,12 +354,13 @@
     </script>
     <script>
 // ---------------------------
+// ---------------------------
 // 1. Récupération User ID
 // ---------------------------
 const params = new URLSearchParams(window.location.search);
  
-const userId= urlParams.get('video');
-const nomUser= urlParams.get('nom');       
+const userId = params.get('video');  // ⚠️ CORRECTION: c'était "urlParams" au lieu de "params"
+const nomUser = params.get('nom');       
 
 if (!userId) {
     console.warn("Aucun user ID dans l'URL → tracking impossible");
@@ -369,7 +370,6 @@ if (!userId) {
 // 2. Système de détection 1ère visite
 // LocalStorage → évite double comptage
 // ---------------------------
-
 const localKey = "video_opened_" + userId;
 let isFirstOpen = false;
 
@@ -379,7 +379,21 @@ if (!localStorage.getItem(localKey)) {
 }
 
 // ---------------------------
-// 3. Envoi webhook vers Make
+// 3. Récupération de l'IP
+// ---------------------------
+async function getUserIP() {
+    try {
+        const response = await fetch('https://api.ipify.org?format=json');
+        const data = await response.json();
+        return data.ip;
+    } catch (error) {
+        console.error("Erreur récupération IP:", error);
+        return "IP non disponible";
+    }
+}
+
+// ---------------------------
+// 4. Envoi webhook vers Make
 // ---------------------------
 function nowFR() {
     const d = new Date();
@@ -388,19 +402,22 @@ function nowFR() {
     });
 }
 
-        
-function sendToMake() {
+async function sendToMake() {
+    // Récupérer l'IP avant d'envoyer
+    const userIP = await getUserIP();
+    
     fetch("https://hook.eu2.make.com/po87vh7wqceje7sc6ctc6lvyg8onuio8", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
             user_id: userId,
+            nom: nomUser,
             first_open: isFirstOpen,
             page_url: window.location.href,
             timestamp: nowFR(),
-            nom: nomUser,
+            ip_address: userIP,  // ✅ IP ajoutée
             userAgent: navigator.userAgent,
-        language: navigator.language  
+            language: navigator.language  
         })
     })
     .then(res => console.log("Webhook Make OK:", res.status))
