@@ -381,7 +381,14 @@ if (!localStorage.getItem(localKey)) {
 // ---------------------------
 // 3. Envoi webhook vers Make
 // ---------------------------
+function nowFR() {
+    const d = new Date();
+    return d.toLocaleString("fr-FR", {
+        timeZone: "Europe/Paris"
+    });
+}
 
+        
 function sendToMake() {
     fetch("https://hook.eu2.make.com/po87vh7wqceje7sc6ctc6lvyg8onuio8", {
         method: "POST",
@@ -390,7 +397,7 @@ function sendToMake() {
             user_id: userId,
             first_open: isFirstOpen,
             page_url: window.location.href,
-            timestamp: new Date().toISOString(),
+            timestamp: nowFR(),
             nom: nomUser
         })
     })
