@@ -312,7 +312,7 @@
         }
         
         // Démarre en mute pour permettre l'autoplay
-        const embedUrl = `https://player.vimeo.com/video/${videoId}?autoplay=1&muted=1&loop=1&title=0&byline=0&portrait=0`;
+        const embedUrl = `https://player.vimeo.com/video/${videoId}?autoplay=1&muted=0&loop=1&title=0&byline=0&portrait=0`;
         playerIframe.src = embedUrl;
         
         playerIframe.onload = function() {
