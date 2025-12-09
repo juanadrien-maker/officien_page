@@ -294,64 +294,118 @@
     <script src="https://player.vimeo.com/api/player.js"></script>
     
     <script>
-        const urlParams = new URLSearchParams(window.location.search);
-        const videoParam = urlParams.get('video');
-        
-        const playerIframe = document.getElementById('vimeoPlayer');
-        const loadingMessage = document.getElementById('loadingMessage');
-        const buttonWrapper = document.getElementById('buttonWrapper');
-        
-        const ctaButton = document.getElementById('ctaButton');
-        
-        if (videoParam) {
-            let videoId;
-            if (videoParam.includes('vimeo.com/')) {
-                videoId = videoParam.split('vimeo.com/')[1].split('?')[0].split('/')[0];
-            } else {
-                videoId = videoParam;
-            }
-            
-            const embedUrl = `https://player.vimeo.com/video/${videoId}?autoplay=1&muted=1&loop=1&title=0&byline=0&portrait=0`;
-            playerIframe.src = embedUrl;
-            
-            playerIframe.onload = function() {
-                try {
-                    const player = new Vimeo.Player(playerIframe);
-                    
-                    player.ready().then(function() {
-                        loadingMessage.style.display = 'none';
-                        playerIframe.style.display = 'block';
-                        player.setVolume(1);
-                    }).catch(function(error) {
-                        console.error('Erreur ready:', error);
-                        loadingMessage.innerHTML = '<p>❌ Erreur de chargement de la vidéo</p>';
-                    });
-                    
-                    player.on('timeupdate', function(data) {
-                        if (data.seconds >= 87 && buttonWrapper.classList.contains('hidden-button')) {
-                            buttonWrapper.classList.remove('hidden-button');
-                            buttonWrapper.classList.add('slide-in');
-                            
-                           
-                        }
-                    });
-                    
-                    player.on('error', function(error) {
-                        console.error('Erreur player:', error);
-                        loadingMessage.innerHTML = '<p>❌ Impossible de lire la vidéo</p>';
-                        loadingMessage.style.display = 'block';
-                    });
-                    
-                } catch (error) {
-                    console.error('Erreur initialisation:', error);
-                    loadingMessage.innerHTML = '<p>❌ Erreur d\'initialisation</p>';
-                }
-            };
-            
+    const urlParams = new URLSearchParams(window.location.search);
+    const videoParam = urlParams.get('video');
+    
+    const playerIframe = document.getElementById('vimeoPlayer');
+    const loadingMessage = document.getElementById('loadingMessage');
+    const buttonWrapper = document.getElementById('buttonWrapper');
+    
+    const ctaButton = document.getElementById('ctaButton');
+    
+    if (videoParam) {
+        let videoId;
+        if (videoParam.includes('vimeo.com/')) {
+            videoId = videoParam.split('vimeo.com/')[1].split('?')[0].split('/')[0];
         } else {
-            loadingMessage.innerHTML = '<p>❌ Aucune vidéo spécifiée</p>';
+            videoId = videoParam;
         }
-    </script>
+        
+        // Démarre en mute pour permettre l'autoplay
+        const embedUrl = `https://player.vimeo.com/video/${videoId}?autoplay=1&muted=1&loop=1&title=0&byline=0&portrait=0`;
+        playerIframe.src = embedUrl;
+        
+        playerIframe.onload = function() {
+            try {
+                const player = new Vimeo.Player(playerIframe);
+                
+                player.ready().then(function() {
+                    loadingMessage.style.display = 'none';
+                    playerIframe.style.display = 'block';
+                    
+                    // Essaie d'activer le son automatiquement après un court délai
+                    setTimeout(function() {
+                        player.setMuted(false).then(function() {
+                            player.setVolume(1);
+                            console.log('Son activé avec succès');
+                        }).catch(function(error) {
+                            console.log('Le navigateur bloque le son:', error);
+                            // Si ça échoue, affiche un bouton pour activer le son
+                            afficherBoutonSon(player);
+                        });
+                    }, 500);
+                    
+                }).catch(function(error) {
+                    console.error('Erreur ready:', error);
+                    loadingMessage.innerHTML = '<p>❌ Erreur de chargement de la vidéo</p>';
+                });
+                
+                player.on('timeupdate', function(data) {
+                    if (data.seconds >= 87 && buttonWrapper.classList.contains('hidden-button')) {
+                        buttonWrapper.classList.remove('hidden-button');
+                        buttonWrapper.classList.add('slide-in');
+                    }
+                });
+                
+                player.on('error', function(error) {
+                    console.error('Erreur player:', error);
+                    loadingMessage.innerHTML = '<p>❌ Impossible de lire la vidéo</p>';
+                    loadingMessage.style.display = 'block';
+                });
+                
+            } catch (error) {
+                console.error('Erreur initialisation:', error);
+                loadingMessage.innerHTML = '<p>❌ Erreur d\'initialisation</p>';
+            }
+        };
+        
+    } else {
+        loadingMessage.innerHTML = '<p>❌ Aucune vidéo spécifiée</p>';
+    }
+    
+    // Fonction pour afficher un bouton "Activer le son"
+    function afficherBoutonSon(player) {
+        const soundButton = document.createElement('button');
+        soundButton.innerHTML = '🔊 Activer le son';
+        soundButton.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            padding: 12px 24px;
+            background: #00adef;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        `;
+        
+        soundButton.onmouseover = function() {
+            this.style.background = '#0088cc';
+            this.style.transform = 'scale(1.05)';
+        };
+        
+        soundButton.onmouseout = function() {
+            this.style.background = '#00adef';
+            this.style.transform = 'scale(1)';
+        };
+        
+        document.body.appendChild(soundButton);
+        
+        soundButton.onclick = function() {
+            player.setMuted(false);
+            player.setVolume(1);
+            soundButton.style.opacity = '0';
+            setTimeout(function() {
+                soundButton.remove();
+            }, 300);
+        };
+    }
+</script>
     <script>
 // ---------------------------
 // ---------------------------
